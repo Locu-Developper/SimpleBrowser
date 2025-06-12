@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MemoBrowser (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MemoBrowser (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
