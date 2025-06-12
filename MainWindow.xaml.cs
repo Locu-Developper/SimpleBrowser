@@ -12,6 +12,8 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using System.Text.RegularExpressions;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,9 +30,36 @@ namespace MemoBrowser
             this.InitializeComponent();
         }
 
-        private void myButton_Click(object sender, RoutedEventArgs e)
+        private Uri ParseAddressBarInput(string inputText)
         {
-            myButton.Content = "Clicked";
+            string urlPattern = @"^https?://.*";
+            Regex urlRegex = new Regex(urlPattern);
+
+            // Ç∆ÇËÇ†Ç¶Ç∏http or httpsÇ©ÇÁénÇ‹ÇÈÇ‡ÇÃÇÃÇ›URIâª
+            if (urlRegex.IsMatch(inputText))
+            {
+                return new Uri(inputText); 
+            }
+
+            // URIÇ∂Ç·Ç»Ç©Ç¡ÇΩèÍçá
+            return new Uri("https://google.com/search?q=" + Uri.EscapeDataString(inputText));
+        }
+
+
+        private void SearchingButton_Click(object sender, RoutedEventArgs e){
+            string inputText = addressBar.Text.Trim();
+            if (inputText.Equals("")) return;
+
+            Uri url = ParseAddressBarInput(inputText);
+            webView.Source = url;
+        }
+
+        private void addressBar_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if(e.Key == VirtualKey.Enter)
+            {
+                ParseAddressBarInput(addressBar.Text.Trim());
+            }
         }
     }
 }
