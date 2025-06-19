@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System.Text.RegularExpressions;
 using Windows.System;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,9 +26,16 @@ namespace MemoBrowser
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        private TabModel tabViewModel;
+
         public MainWindow()
         {
             this.InitializeComponent();
+
+            tabViewModel = new TabModel();
+
+            tabViewModel.Tabs.Add(new TabNode());
+            //tabStack.DataContext = tabModel.Tabs;
         }
 
         private Uri ParseAddressBarInput(string inputText)
@@ -45,8 +53,8 @@ namespace MemoBrowser
             return new Uri("https://google.com/search?q=" + Uri.EscapeDataString(inputText));
         }
 
-
-        private void SearchingButton_Click(object sender, RoutedEventArgs e){
+        private void SeartingMain()
+        {
             string inputText = addressBar.Text.Trim();
             if (inputText.Equals("")) return;
 
@@ -54,12 +62,23 @@ namespace MemoBrowser
             webView.Source = url;
         }
 
+
+        private void SearchingButton_Click(object sender, RoutedEventArgs e){
+            SeartingMain();
+        }
+
         private void addressBar_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if(e.Key == VirtualKey.Enter)
             {
-                ParseAddressBarInput(addressBar.Text.Trim());
+                SeartingMain();
+
             }
+        }
+
+        void Add_Tab(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            tabViewModel.Tabs.Add(new TabNode());
         }
     }
 }

@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Title="MemoBrowser">
 
-    <Grid>
+    <Grid KeyDown="common_KeyDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" />
@@ -21,8 +21,15 @@
         <TextBox    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" PlaceholderText="url or word" x:Name="addressBar" KeyDown="addressBar_KeyDown"/>
         <Button     Grid.Row="0" Grid.Column="1" Click="SearchingButton_Click">検索</Button>
         <WebView2   Grid.Row="1" Grid.Column="0" x:Name="webView" Source="https://google.com" />
-        <StackPanel Grid.Row="1" Grid.Column="1">
-            <TextBlock>aiueo</TextBlock>
-        </StackPanel>
+        <ListView Grid.Row="1" Grid.Column="1" ItemsSource="{x:Bind tabViewModel.Tabs}">
+            <ListView.KeyboardAccelerators>
+                <KeyboardAccelerator Key="T" Modifiers="Control" Invoked="Add_Tab"/>
+            </ListView.KeyboardAccelerators>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:TabNode">
+                    <TextBlock Text="{x:Bind Url}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Window>
