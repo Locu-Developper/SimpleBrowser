@@ -38,6 +38,8 @@ namespace MemoBrowser
             //tabStack.DataContext = tabModel.Tabs;
         }
 
+
+
         private Uri ParseAddressBarInput(string inputText)
         {
             string urlPattern = @"^https?://.*";
@@ -55,7 +57,7 @@ namespace MemoBrowser
 
         private void SeartingMain()
         {
-            string inputText = addressBar.Text.Trim();
+            string inputText = AddressTextBox.Text.Trim();
             if (inputText.Equals("")) return;
 
             Uri url = ParseAddressBarInput(inputText);
@@ -67,18 +69,23 @@ namespace MemoBrowser
             SeartingMain();
         }
 
-        private void addressBar_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void AddressBar_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if(e.Key == VirtualKey.Enter)
             {
                 SeartingMain();
-
+                AddressTextBox.Focus(FocusState.Unfocused);
             }
         }
 
-        void Add_Tab(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        void Add_Tab()
         {
             tabViewModel.Tabs.Add(new TabNode());
+        }
+
+        private void AddNewTab_Click(object sender, RoutedEventArgs e)
+        {
+            Add_Tab();
         }
     }
 }
