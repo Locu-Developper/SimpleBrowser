@@ -1,20 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System.Text.RegularExpressions;
+using Microsoft.Web.WebView2.Core;
 using Windows.System;
-using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,7 +32,6 @@ namespace MemoBrowser
         }
 
 
-
         private Uri ParseAddressBarInput(string inputText)
         {
             string urlPattern = @"^https?://.*";
@@ -55,7 +47,7 @@ namespace MemoBrowser
             return new Uri("https://google.com/search?q=" + Uri.EscapeDataString(inputText));
         }
 
-        private void SeartingMain()
+        private void SeartingProcess()
         {
             string inputText = AddressTextBox.Text.Trim();
             if (inputText.Equals("")) return;
@@ -64,17 +56,12 @@ namespace MemoBrowser
             webView.Source = url;
         }
 
-
-        private void SearchingButton_Click(object sender, RoutedEventArgs e){
-            SeartingMain();
-        }
-
         private void AddressBar_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if(e.Key == VirtualKey.Enter)
             {
-                SeartingMain();
-                AddressTextBox.Focus(FocusState.Unfocused);
+                SeartingProcess();
+                RootComponent.Focus(FocusState.Programmatic);
             }
         }
 
@@ -86,6 +73,35 @@ namespace MemoBrowser
         private void AddNewTab_Click(object sender, RoutedEventArgs e)
         {
             Add_Tab();
+        }
+
+
+        private async void RootComponent_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await webView.EnsureCoreWebView2Async();
+
+                webView.CoreWebView2.DOMContentLoaded += CoreWebView2_DOMContentLoaded;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error loading WebView: " + ex.Message);
+            }
+        }
+
+        private void CoreWebView2_DOMContentLoaded(CoreWebView2 sender, CoreWebView2DOMContentLoadedEventArgs args)
+        {
+            Console.WriteLine("DOM読み込み完了");
+
+            this.DispatcherQueue.TryEnqueue(async () =>
+            {
+                // 少し待ってからタイトルを取得
+                await Task.Delay(500);
+                Debug.WriteLine("タイトル: " + webView.CoreWebView2.DocumentTitle);
+                Debug.WriteLine("URL: " + tabListView.SelectedIndex);
+                tabViewModel.Tabs[tabListView.SelectedIndex].Url = webView.CoreWebView2.DocumentTitle;
+            });
         }
     }
 }

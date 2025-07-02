@@ -10,7 +10,7 @@
   x:Name="MemoBrowser"
   Title="MemoBrowser">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="RootComponent">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="RootComponent" Loaded="RootComponent_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -132,20 +132,24 @@
 
         <!-- メインコンテンツエリア -->
         <Grid Grid.Row="1" Grid.Column="0">
-            <WebView2 x:Name="webView" 
-Source="https://google.com"/>
+            <WebView2 x:Name="webView" Source="https://google.com"/>
         </Grid>
 
+        <!-- タブ一覧 -->
         <Grid Grid.Row="1" Grid.Column="1" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <ListView Grid.Row="0" ItemsSource="{x:Bind tabViewModel.Tabs}">
+            
+            <!-- タブリスト -->
+            <ListView Grid.Row="0" ItemsSource="{x:Bind tabViewModel.Tabs}" x:Name="tabListView" SelectedIndex="0">
                 <ListView.ItemTemplate>
+                    
+                    <!-- タブ単体テンプレート -->
                     <DataTemplate x:Name="SingleLineDataTemplate" x:DataType="local:TabNode">
-                        <StackPanel  Orientation="Horizontal" Height="44" Padding="12">
-                            <TextBlock Text="{x:Bind Url}" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" Margin="12,0,0,0"/>
+                        <StackPanel  Orientation="Horizontal" Height="44" Padding="2">
+                            <TextBlock Text="{x:Bind Url}" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" Margin="0,0,0,0"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
