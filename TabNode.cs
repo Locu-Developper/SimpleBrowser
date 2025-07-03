@@ -12,10 +12,10 @@ namespace MemoBrowser
     class TabNode : ObservableObject
     {
         private static string DEFAULT_URI = "https://www.google.com";
-        public TabNode()
+        public TabNode(WebView2 webView)
         {
-            webView = new WebView2();
-            webView.Source = new Uri(DEFAULT_URI); // 初期URLを設定
+            this.webView =webView;
+            this.webView.Source = new Uri(DEFAULT_URI); // 初期URLを設定
             title = "New Tab";
             url = DEFAULT_URI; // 初期URLを設定
         }

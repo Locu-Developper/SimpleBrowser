@@ -6,6 +6,7 @@
   xmlns:local="using:MemoBrowser"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
   mc:Ignorable="d"
   x:Name="MemoBrowser"
   Title="MemoBrowser">
@@ -131,37 +132,16 @@
         </Border>
 
         <!-- メインコンテンツエリア -->
-        <Grid Grid.Row="1" Grid.Column="0" x:Name="WebViewContainer" />
-
-        <!-- タブ一覧 -->
-        <Grid Grid.Row="1" Grid.Column="1" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            
-            <!-- タブリスト -->
-            <ListView Grid.Row="0" ItemsSource="{x:Bind tabViewModel.Tabs}" x:Name="tabListView" SelectedIndex="0" SelectionChanged="tabListView_SelectionChanged">
-                <ListView.ItemTemplate>
-                    
-                    <!-- タブ単体テンプレート -->
-                    <DataTemplate x:Name="SingleLineDataTemplate" x:DataType="local:TabNode">
-                        <StackPanel  Orientation="Horizontal" Height="44" Padding="2">
-                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" Margin="0,0,0,0"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Button Grid.Row="1" Content="+ 新しいタブ" 
-                Height="44" 
-                Margin="12"
-                Click="AddNewTab_Click"
-                Background="{ThemeResource AccentButtonBackground}"
-                Foreground="WhiteSmoke"
-                CornerRadius="4"
-                HorizontalAlignment="Stretch" 
-                    VerticalAlignment="Bottom"/>
+        <Grid Grid.Row="1" Grid.Column="0">
+            <muxc:TabView x:Name="TabMainView" 
+                TabWidthMode="Equal"
+                CanDragTabs="True"
+                CanReorderTabs="True"
+                IsAddTabButtonVisible="False"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                >
+            </muxc:TabView>
         </Grid>
-
     </Grid>
 </Window>

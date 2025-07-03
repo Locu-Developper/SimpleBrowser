@@ -20,7 +20,7 @@ namespace MemoBrowser
     public sealed partial class MainWindow : Window
     {
         private TabModel tabViewModel;
-        private TabNode currentWebView;
+        private TabNode ?currentWebView { get; set; }
 
         public MainWindow()
         {
@@ -28,8 +28,8 @@ namespace MemoBrowser
 
             tabViewModel = new TabModel();
 
-            Add_Tab(); // 初期タブを追加
-            //tabStack.DataContext = tabModel.Tabs;
+            //await Add_Tab(); // 初期タブを追加
+            
         }
 
 
@@ -64,7 +64,7 @@ namespace MemoBrowser
             if (string.IsNullOrWhiteSpace(input)) return;
 
             Uri url = ParseAddressBarInput(input);
-            tabViewModel.Tabs[tabListView.SelectedIndex].WebView.Source = url;
+            //tabViewModel.Tabs[tabListView.SelectedIndex].WebView.Source = url;
         }
 
         private void AddressBar_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -76,27 +76,42 @@ namespace MemoBrowser
             }
         }
 
-        private void Add_Tab()
+        private async Task Add_Tab()
         {
-            tabViewModel.Tabs.Add(new TabNode());
+            WebView2 webView = new();
+            await webView.EnsureCoreWebView2Async();
 
-            var index = tabViewModel.Tabs.Count - 1;
-            if (index < 0)
+            TabNode tabNode = new(webView);
+            tabViewModel.Tabs.Add(tabNode);
+
+            TabViewItem tabItem = new TabViewItem
             {
-                index = 0; // タブがない場合は最初のタブを選択
-            }
+                Header = tabNode.Title,
+                Content = tabNode.WebView,
+                Tag = tabNode
+            };
+
+            TabMainView.TabItems.Add(tabItem); // 新しいWebViewを設定
+            TabMainView.SelectedItem = tabItem; // 新しいタブを選択
+
+            //var index = tabViewModel.Tabs.Count - 1;
+            //Debug.WriteLine($"Adding new tab at index: {index}");
+            //if (index < 0)
+            //{
+            //    index = 0; // タブがない場合は最初のタブを選択
+            //} else if (currentWebView != null)
+            //{
+            //    WebViewContainer.TabItems.Remove(currentWebView.WebView); // 既存のWebViewをクリア
+            //}
+
+            //tabListView.SelectedIndex = index; // 新しいタブを選択
+            //currentWebView = tabViewModel.Tabs[index];
             
-            WebViewContainer.Children.Clear(); // 既存のWebViewをクリア
-
-            currentWebView = tabViewModel.Tabs[index];
-
-            tabListView.SelectedIndex = index; // 新しいタブを選択
-            WebViewContainer.Children.Add(currentWebView.WebView); // 新しいWebViewを設定
         }
 
-        private void AddNewTab_Click(object sender, RoutedEventArgs e)
+        private async void AddNewTab_Click(object sender, RoutedEventArgs e)
         {
-            Add_Tab();
+            await Add_Tab();
         }
 
 
@@ -104,17 +119,8 @@ namespace MemoBrowser
         {
             try
             {
-                if (WebViewContainer.Children[0] is WebView2 webView)
-                {
-                    await webView.EnsureCoreWebView2Async();
-                    webView.CoreWebView2.DOMContentLoaded += CoreWebView2_DOMContentLoaded;
+                await Add_Tab();
 
-                } else
-                {
-                    Add_Tab();
-                }
-
-                
             }
             catch (Exception ex)
             {
@@ -138,22 +144,20 @@ namespace MemoBrowser
 
         private void WebView_PropertyChanged()
         {
-            var index = tabListView.SelectedIndex;
-            Debug.WriteLine($"Selected Index: {index}");
-            WebViewContainer.Children.Clear(); // 既存のWebViewをクリア
+            //var index = tabListView.SelectedIndex;
+            //Debug.WriteLine($"Selected Index: {index}");
 
-            var selectedTab = tabViewModel.Tabs[index];
-            WebViewContainer.Children.Add(selectedTab.WebView);
-            currentWebView = selectedTab;
-            AddressTextBox.Text = selectedTab.Url;
+            //var selectedTab = tabViewModel.Tabs[index];
+            //TabMainView.SelectedItem = selectedTab;
+            //AddressTextBox.Text = selectedTab.Url;
         }
 
         private void UpdateTabProperty(string title, string url)
         {
-            var selectedTab = tabViewModel.Tabs[tabListView.SelectedIndex];
-            selectedTab.Title = title;
-            selectedTab.Url = url;
-            Debug.WriteLine(tabViewModel.Tabs[tabListView.SelectedIndex].Title);
+            //var selectedTab = tabViewModel.Tabs[tabListView.SelectedIndex];
+            //selectedTab.Title = title;
+            //selectedTab.Url = url;
+            //Debug.WriteLine(tabViewModel.Tabs[tabListView.SelectedIndex].Title);
         }
 
         private void tabListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
