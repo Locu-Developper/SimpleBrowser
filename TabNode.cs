@@ -2,22 +2,48 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CommunityToolkit.Mvvm;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml.Controls;
 
 namespace MemoBrowser
 {
-    class TabNode
+    class TabNode : ObservableObject
     {
-        public TabNode(string url = "https://yahoo.co.jp")
+        private static string DEFAULT_URI = "https://www.google.com";
+        public TabNode()
         {
-            Url = url;
+            webView = new WebView2();
+            webView.Source = new Uri(DEFAULT_URI); // 初期URLを設定
+            title = "New Tab";
+            url = DEFAULT_URI; // 初期URLを設定
         }
 
+        private string title;
         private string url;
+        private WebView2 webView;
+
+        public string Title
+        {
+            get { return title; }
+            set { SetProperty(ref title, value); }
+        }
+
         public string Url
         {
             get { return url; }
-            set { url = value; }
+            set
+            {
+                SetProperty(ref url, value);
+                webView.Source = new Uri(value); // URLが変更されたらWebViewのソースも更新
+            }
+        }
+
+        public WebView2 WebView
+        {
+            get { return webView; }
+            set { SetProperty(ref webView, value); }
         }
     }
 }

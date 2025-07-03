@@ -20,6 +20,7 @@ namespace MemoBrowser
     public sealed partial class MainWindow : Window
     {
         private TabModel tabViewModel;
+        private TabNode currentWebView;
 
         public MainWindow()
         {
@@ -27,33 +28,43 @@ namespace MemoBrowser
 
             tabViewModel = new TabModel();
 
-            tabViewModel.Tabs.Add(new TabNode());
+            Add_Tab(); // 初期タブを追加
             //tabStack.DataContext = tabModel.Tabs;
         }
 
 
-        private Uri ParseAddressBarInput(string inputText)
+        private Uri ParseAddressBarInput(string input)
         {
-            string urlPattern = @"^https?://.*";
-            Regex urlRegex = new Regex(urlPattern);
+            // 既にプロトコルがある場合
+            if (Regex.IsMatch(input, @"^[a-zA-Z][a-zA-Z0-9+.-]*://"))
+                return new Uri(input);
 
-            // とりあえずhttp or httpsから始まるもののみURI化
-            if (urlRegex.IsMatch(inputText))
+            // ドメイン形式の判定（より厳密）
+            var domainPattern = @"^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?:/.*)?$";
+
+            if (Regex.IsMatch(input, domainPattern))
             {
-                return new Uri(inputText); 
+                return new Uri("https://" + input);
             }
 
+            // IPアドレスの場合
+            if (Regex.IsMatch(input, @"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?::\d+)?(?:/.*)?$"))
+            {
+                return new Uri("http://" + input); // IPアドレスはhttpをデフォルト
+            }
+
+
             // URIじゃなかった場合
-            return new Uri("https://google.com/search?q=" + Uri.EscapeDataString(inputText));
+            return new Uri("https://google.com/search?q=" + Uri.EscapeDataString(input));
         }
 
         private void SeartingProcess()
         {
-            string inputText = AddressTextBox.Text.Trim();
-            if (inputText.Equals("")) return;
+            string input = AddressTextBox.Text.Trim();
+            if (string.IsNullOrWhiteSpace(input)) return;
 
-            Uri url = ParseAddressBarInput(inputText);
-            webView.Source = url;
+            Uri url = ParseAddressBarInput(input);
+            tabViewModel.Tabs[tabListView.SelectedIndex].WebView.Source = url;
         }
 
         private void AddressBar_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -65,9 +76,22 @@ namespace MemoBrowser
             }
         }
 
-        void Add_Tab()
+        private void Add_Tab()
         {
             tabViewModel.Tabs.Add(new TabNode());
+
+            var index = tabViewModel.Tabs.Count - 1;
+            if (index < 0)
+            {
+                index = 0; // タブがない場合は最初のタブを選択
+            }
+            
+            WebViewContainer.Children.Clear(); // 既存のWebViewをクリア
+
+            currentWebView = tabViewModel.Tabs[index];
+
+            tabListView.SelectedIndex = index; // 新しいタブを選択
+            WebViewContainer.Children.Add(currentWebView.WebView); // 新しいWebViewを設定
         }
 
         private void AddNewTab_Click(object sender, RoutedEventArgs e)
@@ -80,9 +104,17 @@ namespace MemoBrowser
         {
             try
             {
-                await webView.EnsureCoreWebView2Async();
+                if (WebViewContainer.Children[0] is WebView2 webView)
+                {
+                    await webView.EnsureCoreWebView2Async();
+                    webView.CoreWebView2.DOMContentLoaded += CoreWebView2_DOMContentLoaded;
 
-                webView.CoreWebView2.DOMContentLoaded += CoreWebView2_DOMContentLoaded;
+                } else
+                {
+                    Add_Tab();
+                }
+
+                
             }
             catch (Exception ex)
             {
@@ -97,11 +129,36 @@ namespace MemoBrowser
             this.DispatcherQueue.TryEnqueue(async () =>
             {
                 // 少し待ってからタイトルを取得
-                await Task.Delay(500);
-                Debug.WriteLine("タイトル: " + webView.CoreWebView2.DocumentTitle);
-                Debug.WriteLine("URL: " + tabListView.SelectedIndex);
-                tabViewModel.Tabs[tabListView.SelectedIndex].Url = webView.CoreWebView2.DocumentTitle;
+                await Task.Delay(200);
+                var url = sender.Source.ToString().Replace(" ", "%20");
+                UpdateTabProperty(sender.DocumentTitle, url);
+                AddressTextBox.Text = url;
             });
+        }
+
+        private void WebView_PropertyChanged()
+        {
+            var index = tabListView.SelectedIndex;
+            Debug.WriteLine($"Selected Index: {index}");
+            WebViewContainer.Children.Clear(); // 既存のWebViewをクリア
+
+            var selectedTab = tabViewModel.Tabs[index];
+            WebViewContainer.Children.Add(selectedTab.WebView);
+            currentWebView = selectedTab;
+            AddressTextBox.Text = selectedTab.Url;
+        }
+
+        private void UpdateTabProperty(string title, string url)
+        {
+            var selectedTab = tabViewModel.Tabs[tabListView.SelectedIndex];
+            selectedTab.Title = title;
+            selectedTab.Url = url;
+            Debug.WriteLine(tabViewModel.Tabs[tabListView.SelectedIndex].Title);
+        }
+
+        private void tabListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            WebView_PropertyChanged();
         }
     }
 }

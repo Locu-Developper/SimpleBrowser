@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
 
         <!-- メニューバー/アドレスバー -->
@@ -131,9 +131,7 @@
         </Border>
 
         <!-- メインコンテンツエリア -->
-        <Grid Grid.Row="1" Grid.Column="0">
-            <WebView2 x:Name="webView" Source="https://google.com"/>
-        </Grid>
+        <Grid Grid.Row="1" Grid.Column="0" x:Name="WebViewContainer" />
 
         <!-- タブ一覧 -->
         <Grid Grid.Row="1" Grid.Column="1" >
@@ -143,13 +141,13 @@
             </Grid.RowDefinitions>
             
             <!-- タブリスト -->
-            <ListView Grid.Row="0" ItemsSource="{x:Bind tabViewModel.Tabs}" x:Name="tabListView" SelectedIndex="0">
+            <ListView Grid.Row="0" ItemsSource="{x:Bind tabViewModel.Tabs}" x:Name="tabListView" SelectedIndex="0" SelectionChanged="tabListView_SelectionChanged">
                 <ListView.ItemTemplate>
                     
                     <!-- タブ単体テンプレート -->
                     <DataTemplate x:Name="SingleLineDataTemplate" x:DataType="local:TabNode">
                         <StackPanel  Orientation="Horizontal" Height="44" Padding="2">
-                            <TextBlock Text="{x:Bind Url}" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" Margin="0,0,0,0"/>
+                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" Margin="0,0,0,0"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
