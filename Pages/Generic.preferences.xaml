@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="MemoBrowser.Pages.Generic"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:MemoBrowser.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="UserControl_Loaded"
+    mc:Ignorable="d">
+
+    <Grid Margin="24">
+        <ScrollViewer>
+            <StackPanel Spacing="16">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="一般設定" />
+
+                <StackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="検索エンジン設定" />
+
+                    <ComboBox
+                        x:Name="DefaultSearchEngineComboBox"
+                        MinWidth="300"
+                        Header="デフォルト検索エンジン"
+                        SelectedValuePath="Tag"
+                        SelectionChanged="DefaultSearchEngineComboBox_SelectionChanged">
+                        <ComboBoxItem Content="Google" Tag="Google" />
+                        <ComboBoxItem Content="Bing" Tag="Bing" />
+                        <ComboBoxItem Content="Yahoo!" Tag="Yahoo!" />
+                        <ComboBoxItem Content="DuckDuckGo" Tag="DuckDuckGo" />
+                        <ComboBoxItem Content="Yandex" Tag="Yundex" />
+                    </ComboBox>
+
+                </StackPanel>
+
+                <StackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="ダウンロード設定" />
+
+                    <TextBox
+                        x:Name="DownloadPath"
+                        Header="ダウンロードフォルダ"
+                        TextChanged="DownloadPath_TextChanged"
+                        PlaceholderText="C:\Users\Username\Downloads" />
+                    <Button
+                        x:Name="PickFolderButton"
+                        Margin="0,0,0,10"
+                        Click="PickFolderButton_Click"
+                        Content="フォルダを選択する" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

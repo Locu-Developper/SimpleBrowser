@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="MemoBrowser.Pages.Other"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:MemoBrowser.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Margin="24">
+        <ScrollViewer>
+            <StackPanel Spacing="16">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="その他設定" />
+
+                <StackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="プライバシー" />
+
+                    <CheckBox Content="閲覧履歴を保存する" IsChecked="True" />
+                    <CheckBox Content="Cookieを保存する" IsChecked="True" />
+                    <CheckBox Content="パスワードを保存する" />
+
+                    <Button Margin="0,8,0,0" Content="閲覧データをクリア" />
+                </StackPanel>
+
+                <StackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="セキュリティ" />
+
+                    <CheckBox Content="安全でないサイトをブロックする" IsChecked="True" />
+                    <CheckBox Content="ポップアップをブロックする" IsChecked="True" />
+                </StackPanel>
+
+                <StackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="詳細設定" />
+
+                    <CheckBox Content="開発者ツールを有効にする" />
+                    <CheckBox Content="デバッグモードを有効にする" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
