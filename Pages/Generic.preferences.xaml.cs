@@ -45,11 +45,10 @@ public sealed partial class Generic : UserControl
 
     private void DefaultSearchEngineComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        Debug.WriteLine(DefaultSearchEngineComboBox.SelectedItem);
-        if (DefaultSearchEngineComboBox.SelectedItem is ComboBoxItem selectedItem)
+        if (DefaultSearchEngineComboBox.SelectedItem is TabEngine selectedItem)
         {
             Debug.WriteLine($"Selected search engine: {selectedItem.Tag}");
-            var engineName = (string)selectedItem.Tag;
+            var engineName = selectedItem.Tag;
             var engineUrl = "";
 
             foreach (var engine in EngineList)

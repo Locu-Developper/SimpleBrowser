@@ -25,8 +25,8 @@
         <Grid Grid.Row="0">
             <TabView
                 x:Name="TabMainView"
-                Height="40"
                 Width="1280"
+                Height="40"
                 HorizontalAlignment="Left"
                 AddTabButtonClick="TabMainView_AddTabButtonClick"
                 CanDragTabs="True"
@@ -34,6 +34,7 @@
                 IsAddTabButtonVisible="True"
                 SelectedIndex="{x:Bind SelectedIndex, Mode=TwoWay}"
                 SelectionChanged="TabView_SelectionChanged"
+                TabCloseRequested="TabMainView_TabCloseRequested"
                 TabItemsSource="{x:Bind TabViewModel.Tabs}"
                 TabWidthMode="Equal">
                 <TabView.KeyboardAccelerators>
@@ -139,7 +140,6 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <!--  セキュリティアイコン  -->
@@ -166,20 +166,6 @@
                             KeyDown="AddressBar_KeyDown"
                             PlaceholderText="検索またはWebアドレスを入力" />
 
-                        <!--  お気に入りボタン  -->
-                        <Button
-                            Name="FavoriteButton"
-                            Grid.Column="2"
-                            Width="32"
-                            Height="32"
-                            Margin="4,0,8,0"
-                            Padding="0"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            CornerRadius="16"
-                            ToolTipService.ToolTip="お気に入りに追加">
-                            <FontIcon FontSize="14" Glyph="&#xE734;" />
-                        </Button>
                     </Grid>
                 </Border>
                 <Button
@@ -190,8 +176,8 @@
                     Padding="0"
                     Background="Transparent"
                     BorderThickness="0"
-                    CornerRadius="4"
                     Click="PreferencesButton_Click"
+                    CornerRadius="4"
                     ToolTipService.ToolTip="設定">
                     <FontIcon FontSize="12" Glyph="&#xE713;" />
                 </Button>

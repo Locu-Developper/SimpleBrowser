@@ -71,11 +71,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Pages\Other.preferences.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Pages\Generic.preferences.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

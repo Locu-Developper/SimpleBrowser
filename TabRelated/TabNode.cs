@@ -6,20 +6,26 @@ using CommunityToolkit.Mvvm;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
+using MemoBrowser.Helpers;
 
 namespace MemoBrowser;
 
 public partial class TabNode : ObservableObject
 {
-    private static readonly string DEFAULT_URI = "https://www.google.com";
+
+    public static string DefaultUrl ()
+    {
+        var url = AppSettingsManager.Get("DefaultSearchEngineUrl", "www.google.com").Split("/")[0];
+        return $"https://{url}";
+    }
 
     /**
      * WebView2用 コンストラクタ
      * */
     public TabNode(ref WebView2 webView)
     {
-        Url = DEFAULT_URI;
-        Title = "New Tab";
+        Url = DefaultUrl();
+        _title = "New Tab";
         WebView = webView;
         WebView.Source = new Uri(Url);
 
@@ -32,10 +38,12 @@ public partial class TabNode : ObservableObject
     public TabNode(UserControl userControl, string title, string url)
     {
         IsInternalPage = true;
-        Title = title;
+        _title = title;
         Url = url;
         UserControl = userControl;
     }
+
+    private string _title;
 
     public bool IsInternalPage
     {
@@ -44,7 +52,7 @@ public partial class TabNode : ObservableObject
 
     public string Title
     {
-        get; set;
+        get => _title; set => SetProperty(ref _title, value);
     }
 
     public string Url

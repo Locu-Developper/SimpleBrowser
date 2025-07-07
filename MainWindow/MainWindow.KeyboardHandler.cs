@@ -29,9 +29,30 @@ public sealed partial class MainWindow
         args.Handled = true;
     }
 
-    private void CloseSelectedTab(int index)
+    private void TabMainView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+    {
+        CloseSelectedTab(TabMainView.SelectedIndex);
+    }
+
+    private async void CloseSelectedTab(int index)
     {
         TabViewModel.Tabs.RemoveAt(index);
+
+        if (TabViewModel.Tabs.Count == 0)
+        {
+            // If no tabs left, add a new tab.
+            await AddNewTab();
+        }
+        else if (index >= TabViewModel.Tabs.Count)
+        {
+            // If the closed tab was the last one, select the previous tab.
+            TabMainView.SelectedIndex = TabViewModel.Tabs.Count - 1;
+        }
+        else
+        {
+            // Select the tab that was closed.
+            TabMainView.SelectedIndex = index;
+        }
     }
 
 

@@ -40,4 +40,5 @@ public sealed partial class MainWindow : Window
         Tabs = TabViewModel.Tabs;
     }
 
+
 }

@@ -22,10 +22,6 @@
                 Tag="Generic" />
 
             <NavigationViewItem
-                Content="その他"
-                Icon="More"
-                Tag="Other" />
-            <NavigationViewItem
                 Content="ヘルプ"
                 Icon="Help"
                 Tag="Help" />
