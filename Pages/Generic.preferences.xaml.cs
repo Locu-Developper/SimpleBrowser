@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json;
 using MemoBrowser.Helpers;
+using MemoBrowser;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -17,6 +19,7 @@ using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
+using static System.Net.WebRequestMethods;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,6 +27,17 @@ using Windows.Storage.Pickers;
 namespace MemoBrowser.Pages;
 public sealed partial class Generic : UserControl
 {
+
+    public List<TabEngine> EngineList = new()
+    {
+        new ("Google", "www.google.com/search?q="),
+        new ("Bing", "www.bing.com/search?q="),
+        new ("Yahoo!", "search.yahoo.co.jp/search?p="),
+        new ("Yundex", "yandex.com/search/?text="),
+        new ("Duck Duck Go", "duckduckgo.com/?q="),
+    };
+
+
     public Generic()
     {
         InitializeComponent();
@@ -31,10 +45,23 @@ public sealed partial class Generic : UserControl
 
     private void DefaultSearchEngineComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        Debug.WriteLine(DefaultSearchEngineComboBox.SelectedItem);
         if (DefaultSearchEngineComboBox.SelectedItem is ComboBoxItem selectedItem)
         {
             Debug.WriteLine($"Selected search engine: {selectedItem.Tag}");
-            AppSettingsManager.DefaultSearchEngine = (string)selectedItem.Tag;
+            var engineName = (string)selectedItem.Tag;
+            var engineUrl = "";
+
+            foreach (var engine in EngineList)
+            {
+                if (engine.Name.Equals(engineName))
+                {
+                    engineUrl = engine.Url;
+                }
+            }
+
+            AppSettingsManager.DefaultSearchEngine = engineName;
+            AppSettingsManager.Set("DefaultSearchEngineUrl", engineUrl);
         }
     }
 

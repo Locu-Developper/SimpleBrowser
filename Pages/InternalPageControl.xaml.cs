@@ -36,9 +36,6 @@ public sealed partial class InternalPageControl : UserControl
             case "Generic":
                 contentFrame.Content = new Generic();
                 break;
-            case "Theme":
-                contentFrame.Content = new Theme();
-                break;
             case "Other":
                 contentFrame.Content = new Other();
                 break;

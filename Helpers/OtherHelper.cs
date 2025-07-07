@@ -35,9 +35,10 @@ internal partial class OtherHelper
             return new Uri("http://" + input); // IPアドレスはhttpをデフォルト
         }
 
+        var selectedEngineUrl = AppSettingsManager.Get("DefaultSearchEngineUrl", "google.com/search?q=");
 
         // URIじゃなかった場合
-        return new Uri("https://google.com/search?q=" + Uri.EscapeDataString(input));
+        return new Uri($"https://{selectedEngineUrl}{Uri.EscapeDataString(input)}");
     }
 
 

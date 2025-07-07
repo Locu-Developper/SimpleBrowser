@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:MemoBrowser.Pages"
+    xmlns:root="using:MemoBrowser"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d">
@@ -22,12 +23,12 @@
                         MinWidth="300"
                         Header="デフォルト検索エンジン"
                         SelectedValuePath="Tag"
-                        SelectionChanged="DefaultSearchEngineComboBox_SelectionChanged">
-                        <ComboBoxItem Content="Google" Tag="Google" />
-                        <ComboBoxItem Content="Bing" Tag="Bing" />
-                        <ComboBoxItem Content="Yahoo!" Tag="Yahoo!" />
-                        <ComboBoxItem Content="DuckDuckGo" Tag="DuckDuckGo" />
-                        <ComboBoxItem Content="Yandex" Tag="Yundex" />
+                        SelectionChanged="DefaultSearchEngineComboBox_SelectionChanged" ItemsSource="{x:Bind EngineList}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="root:TabEngine">
+                                <TextBlock Text="{x:Bind Name}" Tag="{x:Bind Tag}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
 
                 </StackPanel>

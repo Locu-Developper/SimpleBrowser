@@ -26,7 +26,8 @@
             <TabView
                 x:Name="TabMainView"
                 Height="40"
-                HorizontalAlignment="Stretch"
+                Width="1280"
+                HorizontalAlignment="Left"
                 AddTabButtonClick="TabMainView_AddTabButtonClick"
                 CanDragTabs="True"
                 CanReorderTabs="True"
